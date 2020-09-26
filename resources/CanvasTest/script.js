@@ -6,13 +6,21 @@ function GetMousePos(event) {
     };
 }
 
-function DrawAll(){
-
-    whiteboard.clearRect(0, 0, canvas.width, canvas.height);
+function UpdateWhiteboard(){
 
     for (var i = 0; i < lines.length; i++){
 
-        if (!lines[i].delete){
+        if (lines[i].delete) {
+
+            whiteboard.beginPath();
+            whiteboard.moveTo(lines[i].startX, lines[i].startY);
+            whiteboard.lineTo(lines[i].endX,lines[i].endY);
+
+            whiteboard.strokeStyle = "white";
+            whiteboard.stroke();
+
+        } else {
+
             whiteboard.beginPath();
             whiteboard.moveTo(lines[i].startX, lines[i].startY);
             whiteboard.lineTo(lines[i].endX,lines[i].endY);
@@ -21,6 +29,9 @@ function DrawAll(){
             whiteboard.stroke();
         }
     }
+
+    lines = [];
+
 }
 
 function KeyPress(key){
@@ -31,7 +42,7 @@ function KeyPress(key){
             whiteboard.clearRect(0, 0, canvas.width, canvas.height);
             break;
         case "b":
-            DrawAll(lines,whiteboard,canvas)
+            UpdateWhiteboard()
             break;
         default:
             // something here
@@ -42,7 +53,7 @@ function KeyPress(key){
 
 function Start(){
 
-    window.lines=[]
+    window.lines =
     window.canvas = document.getElementById('myCanvas');
     window.whiteboard = canvas.getContext("2d");
 
