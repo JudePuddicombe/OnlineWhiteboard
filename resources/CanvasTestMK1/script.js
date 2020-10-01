@@ -53,7 +53,7 @@ function KeyPress(key){
 
 function Start(){
 
-    window.lines =
+    window.lines = []
     window.canvas = document.getElementById('myCanvas');
     window.whiteboard = canvas.getContext("2d");
 
