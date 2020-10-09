@@ -92,3 +92,21 @@ function Start(){
 
 
 }
+
+/*
+
+function RemoveObjectByObject(objectArray,object){
+
+    objectString = JSON.stringify(object)
+
+    for (var i = 0; i < objectArray.length; i++) {
+        if(objectString == JSON.stringify(objectArray[i])){
+            delete objectArray[i] // objectArray passed by ref
+        }
+    }
+
+}
+
+Just putting this here for safe keeping
+
+ */

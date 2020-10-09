@@ -6,19 +6,10 @@ function GetMousePos(event) {
     };
 }
 
-function RemoveObjectByObject(objectArray,object){
-
-    objectString = JSON.stringify(object)
-
-    for (var i = 0; i < objectArray.length; i++) {
-        if(objectString == JSON.stringify(objectArray[i])){
-            delete objectArray[i]
-        }
-    }
-
-}
-
 function UpdateWhiteboard(changes){
+
+
+
 
     for (var i = 0; i < changes.length; i++) {
 
@@ -31,20 +22,23 @@ function UpdateWhiteboard(changes){
             whiteboard.strokeStyle = "white";
             whiteboard.stroke();
 
-            RemoveObjectByObject(whiteboardLines,changes[i])
-
         } else {
 
             whiteboard.beginPath();
             whiteboard.moveTo(changes[i].startX, changes[i].startY);
             whiteboard.lineTo(changes[i].endX, changes[i].endY);
-
+            whiteboard.lineWidth = 1
             whiteboard.strokeStyle = changes[i].color;
             whiteboard.stroke();
 
             whiteboardLines.push(changes[i])
         }
     }
+
+    for (var i = 0; i < whiteboardLines.length; i++) {
+        if(whiteboardLines[i].delete){whiteboardLines.splice(i,1)}
+    }
+
 }
 
 function KeyPress(key){
@@ -55,7 +49,7 @@ function KeyPress(key){
             whiteboard.clearRect(0, 0, canvas.width, canvas.height);
             break;
         default:
-            // something here
+            console.log("Invalid key")
     }
 
 
@@ -63,13 +57,13 @@ function KeyPress(key){
 
 function GetServerLines(){
 
-    databaseResponse = {timeToken: timeToken, serverChanges: [], preSnap: false};
+    serverResponse = {timeToken: timeToken, serverChanges: [], preSnap: false};
 
-    databaseResponse = GetServerUpdate(databaseResponse.timeToken); //   <------ API goes here
+    serverResponse = GetServerUpdate(serverResponse.timeToken); //   <------ API goes here
 
-    if (databaseResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height)}
-    UpdateWhiteboard(databaseResponse.serverChanges)
-    timeToken = databaseResponse.timeToken
+    if (serverResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height); whiteboardLines = [];}
+    UpdateWhiteboard(serverResponse.serverChanges)
+    timeToken = serverResponse.timeToken
 
 }
 
@@ -80,6 +74,36 @@ function ShouldSendClientChanges(){
     } else {
         return false
     }
+}
+
+function SendServerUpdate(){
+
+    //converting clientChanges to a string
+
+    var ObjectStringClientChanges = []
+
+    for(i = 0; i < clientChanges.length; i++){
+        ObjectStringClientChanges.push(JSON.stringify(clientChanges[i]))
+    }
+
+    var StringClientChanges = ObjectStringClientChanges.toString()
+
+    console.log(StringClientChanges)
+
+    /*
+
+    var url = "/line/add/";
+
+    fetch(url + StringClientChanges, {method: "POST",})
+        .then(response => {
+            return response.json();})
+        .then(response => {
+            if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+                alert(JSON.stringify(response));    // if it does, convert JSON object to string and alert
+            }
+    });
+
+     */
 }
 
 function SendClientLines(change){
@@ -98,7 +122,6 @@ function ClearWhiteboard(){
         whiteboardLines[i].delete = true
     }
     UpdateWhiteboard(whiteboardLines)
-    whiteboardLines = []
 }
 
 function Start(){
@@ -118,7 +141,7 @@ function Start(){
             if(pen.drawing){
                 changes = [{startX: this.position.x, startY: this.position.y, endX: coord.x, endY: coord.y, color: this.color, delete: false}]
                 UpdateWhiteboard(changes)
-                // SendClientLines(changes[0])
+                SendClientLines(changes[0])
             }
             this.position = coord;
         },
