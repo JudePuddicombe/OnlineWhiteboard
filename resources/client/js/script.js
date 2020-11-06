@@ -59,15 +59,27 @@ function GetServerLines(){
 
     serverResponse = {timeToken: timeToken, serverChanges: [], preSnap: false};
 
-    serverResponse = GetServerUpdate(serverResponse.timeToken); //   <------ API goes here
+    url = "/Line/get/"
+
+    fetch(url + timeToken, {method: "GET",})
+        .then(response => {
+            serverResponse = response.json();
+        })
+        .then(response => {
+            if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+                alert(JSON.stringify(response));    // if it does, convert JSON object to string and alert
+            }
+        });
 
     if (serverResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height); whiteboardLines = [];}
+
     UpdateWhiteboard(serverResponse.serverChanges)
+
     timeToken = serverResponse.timeToken
 
 }
 
-function ShouldSendClientChanges(){
+function ShouldSendServerUpdate(){
 
     if(clientChanges.length >= 20){
         return true
@@ -105,7 +117,7 @@ function SendServerUpdate(){
 
 function SendClientLines(change){
     clientChanges.push(change)
-    if(ShouldSendClientChanges()){
+    if(ShouldSendServerUpdate()){
         SendServerUpdate(clientChanges) //      <------ API goes here
         clientChanges = []
     }
