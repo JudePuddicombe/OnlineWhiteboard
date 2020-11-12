@@ -73,6 +73,8 @@ public class Line {
             while (results.next()==true){
                 serverLines.add(results.getString(1));
             }
+
+            serverResponse.put("serverChanges",serverLines);
             serverResponse.put("timeToken",timestamp.getTime());
 
             return JSONObject.toJSONString(serverResponse);
@@ -83,6 +85,5 @@ public class Line {
         }
 
     }
-     */
 }
 

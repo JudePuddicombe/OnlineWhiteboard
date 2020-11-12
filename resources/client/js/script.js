@@ -64,11 +64,6 @@ function GetServerLines(){
     fetch(url + timeToken, {method: "GET",})
         .then(response => {
             serverResponse = response.json();
-        })
-        .then(response => {
-            if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
-                alert(JSON.stringify(response));    // if it does, convert JSON object to string and alert
-            }
         });
 
     if (serverResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height); whiteboardLines = [];}
@@ -137,7 +132,7 @@ function Start(){
 
     window.clientChanges = [];
     window.whiteboardLines = [];
-    window.timeToken = null;
+    window.timeToken = 0;
     window.lines = [];
     window.canvas = document.getElementById('myCanvas');
     window.whiteboard = canvas.getContext("2d");
@@ -166,7 +161,7 @@ function Start(){
     document.addEventListener('mousedown', pen.penDown)
     document.addEventListener('mouseup', pen.penUp)
     document.addEventListener('keypress', function(event){KeyPress(event.key)});
-    // window.setInterval(GetServerLines, 5000);
+    //window.setInterval(GetServerLines, 5000);
 
     //whiteboard buttons
 
@@ -174,5 +169,6 @@ function Start(){
     document.getElementById("greenColorButton").onclick = function(){pen.color = "green"}
     document.getElementById("blueColorButton").onclick = function(){pen.color = "blue"}
     document.getElementById("clearWhiteboardButton").onclick = function(){ClearWhiteboard()}
+    document.getElementById("updateButton").onclick = function(){GetServerLines()}
 
 }
