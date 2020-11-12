@@ -52,9 +52,10 @@ public class Line {
 
     }
 
-    @POST
+    @GET
     @Path("get/{timetoken}")
     public static String lineGet(@PathParam("timetoken") double timeToken){
+
         System.out.println("Invoked Lines.lineGet()");
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
