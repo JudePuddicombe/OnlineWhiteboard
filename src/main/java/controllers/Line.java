@@ -52,9 +52,10 @@ public class Line {
 
     }
 
-    @POST
+    @GET
     @Path("get/{timetoken}")
     public static String lineGet(@PathParam("timetoken") double timeToken){
+
         System.out.println("Invoked Lines.lineGet()");
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -63,20 +64,24 @@ public class Line {
         serverResponse.put("preSnap",false);
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT LineString WHERE TimeToken > timetoken");
+            PreparedStatement ps = Main.db.prepareStatement("SELECT LineString FROM Lines WHERE TimeToken > ?");
+            ps.setDouble(1,timeToken);
             ps.execute();
 
             ResultSet results = ps.executeQuery();
 
             List serverLines = new ArrayList();
+            // System.out.println(results.next());
 
             while (results.next()==true){
                 serverLines.add(results.getString(1));
+                // System.out.println(serverLines);
             }
 
             serverResponse.put("serverChanges",serverLines);
             serverResponse.put("timeToken",timestamp.getTime());
 
+            System.out.println(JSONObject.toJSONString(serverResponse));
             return JSONObject.toJSONString(serverResponse);
 
         } catch (Exception exception) {

@@ -7,9 +7,7 @@ function GetMousePos(event) {
 }
 
 function UpdateWhiteboard(changes){
-
-
-
+    console.log("Invoked updateWhiteboard");
 
     for (var i = 0; i < changes.length; i++) {
 
@@ -56,21 +54,30 @@ function KeyPress(key){
 }
 
 function GetServerLines(){
-
+    console.log("Invoked getServerLines()");
     serverResponse = {timeToken: timeToken, serverChanges: [], preSnap: false};
 
-    url = "/Line/get/"
+    const url = "/line/get/";
 
-    fetch(url + timeToken, {method: "GET",})
-        .then(response => {
-            serverResponse = response.json();
-        });
+    fetch(url + timeToken, {
+        method: "GET",
+    }).then(response => {
+        return response.json();
+    }).then(response => {
+        if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+            alert(JSON.stringify(response));    // if it does, convert JSON object to string and alert
+        } else {
+            serverResponse = response;
+            console.log(serverResponse);
+            if (serverResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height); whiteboardLines = [];}
+            UpdateWhiteboard(serverResponse.serverChanges);
+            timeToken = serverResponse.timeToken;
+        }
+    });
 
-    if (serverResponse.preSnap) {whiteboard.clearRect(0, 0, canvas.width, canvas.height); whiteboardLines = [];}
 
-    UpdateWhiteboard(serverResponse.serverChanges)
 
-    timeToken = serverResponse.timeToken
+
 
 }
 
