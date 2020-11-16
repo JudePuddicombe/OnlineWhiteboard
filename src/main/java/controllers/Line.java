@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Path("line/")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -26,8 +27,10 @@ public class Line {
     public static String lineAdd(@PathParam("clientChanges") String clientChanges){
         System.out.println("Invoked Lines.lineAdd()");
 
-        String[] clientChangesArray = clientChanges.split("},\\{");
-        JSONParser parser = new JSONParser();
+        String trimmedClientChanges = clientChanges.substring(1,clientChanges.length()-1);
+        String[] clientChangesArray = trimmedClientChanges.split("},\\{"); //Splitting up the path parameter into is JSON Objects
+
+        System.out.println(clientChangesArray);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         double timeToken = timestamp.getTime();
@@ -61,10 +64,10 @@ public class Line {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         JSONObject serverResponse = new JSONObject();
-        serverResponse.put("preSnap",false);
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT LineString WHERE TimeToken > timetoken");
+            PreparedStatement ps = Main.db.prepareStatement("SELECT LineString FROM Lines WHERE TimeToken > ?");
+            ps.setDouble(1, timeToken);
             ps.execute();
 
             ResultSet results = ps.executeQuery();
@@ -72,8 +75,12 @@ public class Line {
             List serverLines = new ArrayList();
 
             while (results.next()==true){
-                serverLines.add(results.getString(1));
+                String tempVar = results.getString(1);
+                serverLines.add(tempVar);
+                System.out.println(tempVar);
             }
+
+            System.out.println(serverLines);
 
             serverResponse.put("serverChanges",serverLines);
             serverResponse.put("timeToken",timestamp.getTime());
