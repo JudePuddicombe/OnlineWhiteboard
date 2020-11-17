@@ -2,9 +2,7 @@ package controllers;
 
 
 
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import server.Main;
 
 import javax.ws.rs.*;
@@ -14,13 +12,12 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-@Path("line/")
+@Path("whiteboardLog/") //this needs to be overhauled
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
 
-public class Line {
+public class WhiteboardLog {
 
     @POST
     @Path("add/{clientChanges}")
