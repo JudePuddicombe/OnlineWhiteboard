@@ -1,15 +1,15 @@
 class Whiteboard{ //writes and manages all lines on the canvas, these come from the pen or directly from the db
 
-    metaCanvas;
-
     canvas;
+
+    context;
 
     server;
 
-    constructor(metaCanvas,server) {
-        this.metaCanvas = metaCanvas;
-        this.canvas = metaCanvas.getContext("2d");
-        this.server = server;
+    constructor(c, s) {
+        this.canvas = c;
+        this.context = c.getContext("2d");
+        this.server = s;
     }
 
     handleWhiteboardEvents(whiteboardEvents) {
@@ -22,19 +22,19 @@ class Whiteboard{ //writes and manages all lines on the canvas, these come from 
 
         //drawing the line (NOTE: The whole delete-tag system has been removed)
 
-        this.canvas.beginPath();
-        this.canvas.moveTo(lineSegment.startX, lineSegment.startY);
-        this.canvas.lineTo(lineSegment.endX, lineSegment.endY);
-        this.canvas.lineWidth = lineSegment.width;
-        this.canvas.strokeStyle = lineSegment.color;
-        this.canvas.stroke();
+        this.context.beginPath();
+        this.context.moveTo(lineSegment.startX, lineSegment.startY);
+        this.context.lineTo(lineSegment.endX, lineSegment.endY);
+        this.context.lineWidth = lineSegment.width;
+        this.context.strokeStyle = lineSegment.color;
+        this.context.stroke();
     }
 
     clear(){
 
         console.log("Clearing Whiteboard");
 
-        this.canvas.clearRect(0, 0, this.canvas.width, this.canvas.height); //clear canvas
+        this.context.clearRect(0, 0, this.context.width, this.context.height); //clear canvas
         this.server.clientWhiteboardEvents = [];//clear any events to be sent to the db
     }
 
@@ -171,6 +171,7 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
             console.log("moved!");
 
             whiteboard.handleClientWhiteboardEvent(lineSegment); //handeling the new "event"
+            console.log("and draw!");
 
         } else {
             this.position = position; //moving the pen

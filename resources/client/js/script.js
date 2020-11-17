@@ -1,21 +1,29 @@
 function Start(){
 
-    metaCanvas = document.getElementById('whiteboardCanvas');
+    let metaCanvas = document.getElementById('whiteboardCanvas');
 
-    server = new Server();
+    let server = new Server();
 
-    whiteboard = new Whiteboard(metaCanvas,server);
+    let whiteboard = new Whiteboard(metaCanvas,server);
 
-    pen = new Pen(whiteboard);
+    let pen = new Pen(whiteboard);
 
-    function myFunction(event){
-        console.log("Trying to move")
-        pen.moveTo(pen.findPosition(event))
-    }
+    document.addEventListener('mousemove',
+        (event) => {
+            console.log("mousemove");
+            pen.moveTo(pen.findPosition(event));
+        });
 
-    document.addEventListener('mousemove', myFunction);
-    document.addEventListener('mousedown', pen.down);
-    document.addEventListener('mouseup', pen.up);
+    document.addEventListener('mousedown', (event) => {
+        console.log("mousedown");
+        pen.down();
+    });
+
+    document.addEventListener('mouseup', (event) => {
+        console.log("mouseup");
+        pen.up();
+    });
+
     //window.setInterval(GetServerLines, 5000);
 
     //whiteboard buttons
