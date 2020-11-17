@@ -1,11 +1,14 @@
 class Whiteboard{ //writes and manages all lines on the canvas, these come from the pen or directly from the db
 
+    metaCanvas;
+
     canvas;
 
     server;
 
-    constructor(canvas,server) {
-        this.canvas = canvas;
+    constructor(metaCanvas,server) {
+        this.metaCanvas = metaCanvas;
+        this.canvas = metaCanvas.getContext("2d");
         this.server = server;
     }
 
@@ -28,10 +31,11 @@ class Whiteboard{ //writes and manages all lines on the canvas, these come from 
     }
 
     clear(){
+
         console.log("Clearing Whiteboard");
 
-        this.canvas.clearRect(0, 0, canvas.width, canvas.height); //clear canvas
-        this.server.clientChanges = [];//clear any events to be sent to the db
+        this.canvas.clearRect(0, 0, this.canvas.width, this.canvas.height); //clear canvas
+        this.server.clientWhiteboardEvents = [];//clear any events to be sent to the db
     }
 
     handleWhiteboardEvent(whiteboardEvent){
@@ -47,37 +51,36 @@ class Whiteboard{ //writes and manages all lines on the canvas, these come from 
         }
     }
 
-    findPosition(event) {
-        let rect = this.canvas.getBoundingClientRect();
-        return {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
-        };
-    }
-
-    handleClientChange(clientChange){
-        this.handleWhiteboardEvent(clientChange);
-        this.server.putWhiteboardEvent(clientChange);
+    handleClientWhiteboardEvent(whiteboardEvent){
+        this.handleWhiteboardEvent(whiteboardEvent);
+        // this.server.putWhiteboardEvent(whiteboardEvent);
     }
 }
 
-class Server{ //contains all functions used when dealing with the server
-
-    clientChanges;
+class Server{ //contains all functions used when dealing with the server;
 
     timeToken = 0;
 
     shouldSendClientChanges = true;
 
+    clientWhiteboardEvents = [];
+
+    constructor() {
+    }
+
+    /*
+
     constructor(classroomId) {
         this.classroomId = classroomId
     }
 
-    getWhiteboardLogs(){ //in the future the classroom Id will be used to distinguish the different whiteboards
+     */
 
-        console.log("Invoked Server.getLines()"); //console.log for debugging
+    getWhiteboardEvents(){ //in the future the classroom Id will be used to distinguish the different whiteboards
 
-        fetch("/whiteboardLog/get/" + timeToken, {
+        console.log("Invoked Server.getWhiteboardEvents()"); //console.log for debugging
+
+        fetch("/whiteboardEvents/get/" + timeToken, {
             method: "GET", //method being used with the database
         }).then(response => { //api returns a promise
             return response.json(); //converting the response to JSON returns a promise
@@ -91,16 +94,26 @@ class Server{ //contains all functions used when dealing with the server
         });
     }
 
-    putWhiteboardEvent(clientChange){
-        this.clientChanges.put(clientChange);
-        this.actuallyPutWhiteboardEvent()
+    putWhiteboardEvent(clientWhiteboardEvent){
+
+        console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
+
+        this.clientWhiteboardEvents.push(clientWhiteboardEvent);
+        this.actuallyPutWhiteboardEvents()
     }
 
-    actuallyPutWhiteboardEvent(){ //create a versatile api that sends whiteboard events (Line and Clear)
+    actuallyPutWhiteboardEventsTimeOut(){
+        this.shouldSendClientChanges = true;
+        this.actuallyPutWhiteboardEvents()
+    }
 
-        if(!this.shouldSendClientChanges || !this.clientChanges){return} //defensive code
+    actuallyPutWhiteboardEvents(){ //create a versatile api that sends whiteboard events (Line and Clear)
 
-        fetch("/whiteboardLog/add/", {method: "POST", body: this.clientChanges})
+        console.log("Invoked Server.actuallyPutWhiteboardEvents"); //console.log for debugging
+
+        if(!this.shouldSendClientChanges || !this.clientWhiteboardEvents){return} //defensive code
+
+        fetch("/whiteboardEvents/add/", {method: "POST", body: this.clientWhiteboardEvents})
             .then(response => {
                 return response.json();})
             .then(response => {
@@ -109,11 +122,11 @@ class Server{ //contains all functions used when dealing with the server
                 }
             });
 
-        this.clientChanges = [];
+        this.clientWhiteboardEvents = [];
 
         this.shouldSendClientChanges = false;
 
-        setTimeout(function (){this.shouldSendClientChanges = true; this.actuallyPutWhiteboardEvent()},500) //unlocks the function after 500 milliseconds and checks to see if it should run again
+        setTimeout(this.actuallyPutWhiteboardEventsTimeOut,500) //unlocks the function after 500 milliseconds and checks to see if it should run again
     }
 }
 
@@ -132,26 +145,44 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
     width = 1;
 
     down(){
+        console.log("pen is down");
         this.drawing = true;
+        console.log(this.drawing)
     }
 
     up(){
+        console.log("pen is up");
         this.drawing = false;
     }
 
     moveTo(position){
 
+        console.log("again, trying to move");
+        console.log(this.drawing);
+
         if(this.drawing){
 
-            let lineSegment
-            lineSegment = {startX: this.position.x, startY: this.position.y, endX: position.x, endY: position.y, color: this.color, type: "draw"}; //creating a lineSegment
+            console.log("trying to draw");
+
+            let lineSegment;
+            lineSegment = {startX: this.position.x, startY: this.position.y, endX: position.x, endY: position.y, color: this.color, width:this.width, type: "draw"}; //creating a lineSegment
 
             this.position = position; //moving the pen
+            console.log("moved!");
 
-            whiteboard.handleClientChange(lineSegment); //handeling the new event
+            whiteboard.handleClientWhiteboardEvent(lineSegment); //handeling the new "event"
 
         } else {
             this.position = position; //moving the pen
+            console.log("moved!");
         }
+    }
+
+    findPosition(event) {
+        let rect = this.whiteboard.metaCanvas.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
     }
 }
