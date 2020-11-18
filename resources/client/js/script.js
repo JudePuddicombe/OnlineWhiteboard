@@ -1,36 +1,25 @@
 function Start(){
 
-    let metaCanvas = document.getElementById('whiteboardCanvas');
+    let canvas = document.getElementById('whiteboardCanvas');
 
     let server = new Server();
 
-    let whiteboard = new Whiteboard(metaCanvas,server);
+    let whiteboard = new Whiteboard(canvas,server);
 
     let pen = new Pen(whiteboard);
 
-    document.addEventListener('mousemove',
-        (event) => {
-            console.log("mousemove");
-            pen.moveTo(pen.findPosition(event));
-        });
-
-    document.addEventListener('mousedown', (event) => {
-        console.log("mousedown");
-        pen.down();
-    });
-
-    document.addEventListener('mouseup', (event) => {
-        console.log("mouseup");
-        pen.up();
-    });
+    document.addEventListener('mousemove', function (event) {pen.moveTo(pen.findPosition(event))});
+    document.addEventListener('mousedown', function () {pen.down()}); //these functions are wrapped to retain "this"
+    document.addEventListener('mouseup', function () {pen.up()});
 
     //window.setInterval(GetServerLines, 5000);
 
     //whiteboard buttons
 
-    document.getElementById("redColorButton").onclick = function(){pen.color = "red"};
-    document.getElementById("greenColorButton").onclick = function(){pen.color = "green"};
-    document.getElementById("blueColorButton").onclick = function(){pen.color = "blue"};
-    document.getElementById("clearWhiteboardButton").onclick = function(){whiteboard.handleClientWhiteboardEvent({type: "clear"})};
+    document.getElementById("redColorButton").onclick = function() {pen.setColor("red")};
+    document.getElementById("greenColorButton").onclick = function() {pen.setColor("green")};
+    document.getElementById("blueColorButton").onclick = function() {pen.setColor("blue")};
+    document.getElementById("clearWhiteboardButton").onclick = function(){whiteboard.handleClientWhiteboardEvent({type: "clear"})}; //generates clearing events for the whiteboard
+    document.getElementById("updateButton").onclick = function(){whiteboard.handleWhiteboardEvents(server.getWhiteboardEvents())} //gets then draw new events from the server
 
 }

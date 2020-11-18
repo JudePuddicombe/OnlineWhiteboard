@@ -13,15 +13,18 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("whiteboardLog/") //this needs to be overhauled
+@Path("whiteboardEvents/") //this needs to be overhauled
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
 
-public class WhiteboardLog {
+public class WhiteboardEvents {
 
     @POST
-    @Path("add/{clientChanges}")
-    public static String lineAdd(@PathParam("clientChanges") String clientChanges){
+    @Path("add/")
+    public static String eventAdd(request){
+
+        request
+
         System.out.println("Invoked Lines.lineAdd()");
 
         String trimmedClientChanges = clientChanges.substring(1,clientChanges.length()-1);

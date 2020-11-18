@@ -1,10 +1,4 @@
-class Whiteboard{ //writes and manages all lines on the canvas, these come from the pen or directly from the db
-
-    canvas;
-
-    context;
-
-    server;
+class Whiteboard{ //manages events for the whiteboard (draw or clear) of the canvas
 
     constructor(c, s) {
         this.canvas = c;
@@ -31,11 +25,8 @@ class Whiteboard{ //writes and manages all lines on the canvas, these come from 
     }
 
     clear(){
-
         console.log("Clearing Whiteboard");
-
-        this.context.clearRect(0, 0, this.context.width, this.context.height); //clear canvas
-        this.server.clientWhiteboardEvents = [];//clear any events to be sent to the db
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); //clear canvas
     }
 
     handleWhiteboardEvent(whiteboardEvent){
@@ -53,11 +44,11 @@ class Whiteboard{ //writes and manages all lines on the canvas, these come from 
 
     handleClientWhiteboardEvent(whiteboardEvent){
         this.handleWhiteboardEvent(whiteboardEvent);
-        // this.server.putWhiteboardEvent(whiteboardEvent);
+        this.server.putWhiteboardEvent(whiteboardEvent);
     }
 }
 
-class Server{ //contains all functions used when dealing with the server;
+class Server{ //contains all methods and attributes used when dealing with the server
 
     timeToken = 0;
 
@@ -80,7 +71,7 @@ class Server{ //contains all functions used when dealing with the server;
 
         console.log("Invoked Server.getWhiteboardEvents()"); //console.log for debugging
 
-        fetch("/whiteboardEvents/get/" + timeToken, {
+        fetch("/whiteboardEvents/get/" + this.timeToken, {
             method: "GET", //method being used with the database
         }).then(response => { //api returns a promise
             return response.json(); //converting the response to JSON returns a promise
@@ -88,8 +79,8 @@ class Server{ //contains all functions used when dealing with the server;
             if (serverResponse.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
                 alert(JSON.stringify(serverResponse));    // if it does, convert JSON object to string and alert
             } else {
-                this.timeToken = serverResponse.timeToken //updates timetoken
-                return serverResponse.serverChanges //returns serverChanges
+                this.timeToken = serverResponse.timeToken; //updates timetoken
+                return serverResponse.whiteboardEvents; //returns serverChanges
             }
         });
     }
@@ -98,7 +89,7 @@ class Server{ //contains all functions used when dealing with the server;
 
         console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
 
-        this.clientWhiteboardEvents.push(clientWhiteboardEvent);
+        this.clientWhiteboardEvents.push(JSON.stringify(clientWhiteboardEvent)); //add the JSON strings of the events to the list of evenst to go to the db
         this.actuallyPutWhiteboardEvents()
     }
 
@@ -113,7 +104,7 @@ class Server{ //contains all functions used when dealing with the server;
 
         if(!this.shouldSendClientChanges || !this.clientWhiteboardEvents){return} //defensive code
 
-        fetch("/whiteboardEvents/add/", {method: "POST", body: this.clientWhiteboardEvents})
+        fetch("/whiteboardEvents/put/", {method: "POST" ,body: this.clientWhiteboardEvents.toString()}) //converting array to string so it can be passed in the body
             .then(response => {
                 return response.json();})
             .then(response => {
@@ -130,7 +121,7 @@ class Server{ //contains all functions used when dealing with the server;
     }
 }
 
-class Pen{ //deals with the cursor moving and drawing on the canvas
+class Pen{ //generates drawing events for the whiteboard
 
     constructor(whiteboard) {
         this.whiteboard = whiteboard;
@@ -144,10 +135,14 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
 
     width = 1;
 
+    setColor(color){
+        console.log("Setting color too: " + color);
+        this.color = color;
+    }
+
     down(){
         console.log("pen is down");
         this.drawing = true;
-        console.log(this.drawing)
     }
 
     up(){
@@ -157,8 +152,7 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
 
     moveTo(position){
 
-        console.log("again, trying to move");
-        console.log(this.drawing);
+        console.log("trying to move");
 
         if(this.drawing){
 
@@ -170,8 +164,8 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
             this.position = position; //moving the pen
             console.log("moved!");
 
-            whiteboard.handleClientWhiteboardEvent(lineSegment); //handeling the new "event"
-            console.log("and draw!");
+            this.whiteboard.handleClientWhiteboardEvent(lineSegment); //handeling the new "event"
+            console.log("and drawn!");
 
         } else {
             this.position = position; //moving the pen
@@ -180,7 +174,7 @@ class Pen{ //deals with the cursor moving and drawing on the canvas
     }
 
     findPosition(event) {
-        let rect = this.whiteboard.metaCanvas.getBoundingClientRect();
+        let rect = this.whiteboard.canvas.getBoundingClientRect();
         return {
             x: event.clientX - rect.left,
             y: event.clientY - rect.top
