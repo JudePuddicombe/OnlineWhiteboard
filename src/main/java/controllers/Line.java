@@ -26,6 +26,7 @@ public class Line {
     @Path("add/{clientChanges}")
     public static String lineAdd(@PathParam("clientChanges") String clientChanges){
         System.out.println("Invoked Lines.lineAdd()");
+        System.out.println();
 
         String trimmedClientChanges = clientChanges.substring(1,clientChanges.length()-1);
         String[] clientChangesArray = trimmedClientChanges.split("},\\{"); //Splitting up the path parameter into is JSON Objects

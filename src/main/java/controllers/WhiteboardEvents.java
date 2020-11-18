@@ -2,7 +2,9 @@ package controllers;
 
 
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import server.Main;
 
 import javax.ws.rs.*;
@@ -14,52 +16,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("whiteboardEvents/") //this needs to be overhauled
-@Consumes(MediaType.MULTIPART_FORM_DATA)
+// @Consumes(MediaType.MULTIPART_FORM_DATA)
+@Consumes({"text/plain;charset=UTF-8"})
 @Produces(MediaType.APPLICATION_JSON)
 
 public class WhiteboardEvents {
 
     @POST
     @Path("add/")
-    public static String eventAdd(request){
+    public static String eventAdd(String body) throws Exception{
 
-        request
+        System.out.println("Invoked whiteboardEvents/add");
 
-        System.out.println("Invoked Lines.lineAdd()");
+        JSONParser parser = new JSONParser();
 
-        String trimmedClientChanges = clientChanges.substring(1,clientChanges.length()-1);
-        String[] clientChangesArray = trimmedClientChanges.split("},\\{"); //Splitting up the path parameter into is JSON Objects
+        JSONObject temp = new JSONObject("{clientEvents: " + body + "}");
 
-        System.out.println(clientChangesArray);
+        JSONArray clientEvents = (JSONArray) parser.parse(body);
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        double timeToken = timestamp.getTime();
-
-        try {
-            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO Lines (LineString,timeToken) VALUES (?,?)");
-            for(int i = 0; i < clientChangesArray.length; i++) {
-
-                String lineString = "{" + clientChangesArray[i] + "}";
-
-                ps.setString(1, lineString);
-                ps.setDouble(2, timeToken);
-                ps.execute();
-            }
-
-            return "{\"OK\": \"Added lines.\"}";
-
-        } catch (Exception exception) {
-            System.out.println("Database error: " + exception.getMessage());
-            return "{\"Error\": \"Unable to create new lines, please see server console for more info.\"}";
-        }
-
+        return "{myString: \"string\"}";
     }
 
     @GET
     @Path("get/{timetoken}")
     public static String lineGet(@PathParam("timetoken") double timeToken){
 
-        System.out.println("Invoked Lines.lineGet()");
+        System.out.println("Invoked whiteboardEvents/get");
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 

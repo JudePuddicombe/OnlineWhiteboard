@@ -89,11 +89,12 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
 
-        this.clientWhiteboardEvents.push(JSON.stringify(clientWhiteboardEvent)); //add the JSON strings of the events to the list of evenst to go to the db
+        this.clientWhiteboardEvents.push(clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
         this.actuallyPutWhiteboardEvents()
     }
 
     actuallyPutWhiteboardEventsTimeOut(){
+        console.log("Timeout executing");
         this.shouldSendClientChanges = true;
         this.actuallyPutWhiteboardEvents()
     }
@@ -102,9 +103,15 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.actuallyPutWhiteboardEvents"); //console.log for debugging
 
-        if(!this.shouldSendClientChanges || !this.clientWhiteboardEvents){return} //defensive code
+        if(!this.shouldSendClientChanges || this.clientWhiteboardEvents.length == 0){return} //defensive code
 
-        fetch("/whiteboardEvents/put/", {method: "POST" ,body: this.clientWhiteboardEvents.toString()}) //converting array to string so it can be passed in the body
+        console.log("Actually RUNNING actuallyPutWhiteboardEvents");
+
+        let formData = new FormData();
+
+        formData.set("clientWhiteboardEvents",JSON.stringify(this.clientWhiteboardEvents))
+
+        fetch("/whiteboardEvents/add/", {method: "POST" ,body: JSON.stringify(this.clientWhiteboardEvents)}) //converting array to string so it can be passed in the body
             .then(response => {
                 return response.json();})
             .then(response => {
@@ -117,7 +124,10 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         this.shouldSendClientChanges = false;
 
-        setTimeout(this.actuallyPutWhiteboardEventsTimeOut,500) //unlocks the function after 500 milliseconds and checks to see if it should run again
+        console.log("MOO");
+
+        let server = this; //so that the call back function knows what server to talk to when it's in the middle of nowhere
+        setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},500,server) //unlocks the function after 500 milliseconds and checks to see if it should run again
     }
 }
 
