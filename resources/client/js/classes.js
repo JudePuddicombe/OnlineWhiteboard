@@ -54,9 +54,8 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
     shouldSendClientChanges = true;
 
-    clientWhiteboardEvents = [];
-
     constructor() {
+        this.clientForm = new FormData();
     }
 
     /*
@@ -89,13 +88,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
 
-        this.clientWhiteboardEvents.push(clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
-        this.actuallyPutWhiteboardEvents()
-    }
-
-    actuallyPutWhiteboardEventsTimeOut(){
-        console.log("Timeout executing");
-        this.shouldSendClientChanges = true;
+        this.clientForm.append("events",clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
         this.actuallyPutWhiteboardEvents()
     }
 
@@ -103,15 +96,11 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.actuallyPutWhiteboardEvents"); //console.log for debugging
 
-        if(!this.shouldSendClientChanges || this.clientWhiteboardEvents.length == 0){return} //defensive code
+        if(!this.shouldSendClientChanges || !this.clientForm.get("events")){return}
 
         console.log("Actually RUNNING actuallyPutWhiteboardEvents");
 
-        let formData = new FormData();
-
-        formData.set("clientWhiteboardEvents",JSON.stringify(this.clientWhiteboardEvents))
-
-        fetch("/whiteboardEvents/add/", {method: "POST" ,body: JSON.stringify(this.clientWhiteboardEvents)}) //converting array to string so it can be passed in the body
+        fetch("/whiteboardEvents/add/", {method: "POST" ,body: this.clientForm}) //converting array to string so it can be passed in the body
             .then(response => {
                 return response.json();})
             .then(response => {
@@ -120,11 +109,9 @@ class Server{ //contains all methods and attributes used when dealing with the s
                 }
             });
 
-        this.clientWhiteboardEvents = [];
+        this.clientForm.delete("events");
 
         this.shouldSendClientChanges = false;
-
-        console.log("MOO");
 
         let server = this; //so that the call back function knows what server to talk to when it's in the middle of nowhere
         setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},500,server) //unlocks the function after 500 milliseconds and checks to see if it should run again

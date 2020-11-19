@@ -1,10 +1,10 @@
 package controllers;
 
 
-
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import play.mvc.*;
+import play.mvc.Http.*;
 import server.Main;
 
 import javax.ws.rs.*;
@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("whiteboardEvents/") //this needs to be overhauled
-// @Consumes(MediaType.MULTIPART_FORM_DATA)
-@Consumes({"text/plain;charset=UTF-8"})
+@Consumes(MediaType.MULTIPART_FORM_DATA)
+// @Consumes({"text/plain;charset=UTF-8"})
 @Produces(MediaType.APPLICATION_JSON)
 
 public class WhiteboardEvents {
@@ -26,13 +26,17 @@ public class WhiteboardEvents {
     @Path("add/")
     public static String eventAdd(String body) throws Exception{
 
+        MediaType mediaType = new MediaType("MULTIPART_FORM_DATA","*");
+
+        Object clientForm = mediaType.parseMediaType(body);
+
         System.out.println("Invoked whiteboardEvents/add");
 
-        JSONParser parser = new JSONParser();
+        BodyParser parser = new JSONParser();
 
-        JSONObject temp = new JSONObject("{clientEvents: " + body + "}");
+        parser.parse(clientForm);
 
-        JSONArray clientEvents = (JSONArray) parser.parse(body);
+        // JSONArray clientEvents = (JSONArray) parser.parse(body);
 
         return "{myString: \"string\"}";
     }
