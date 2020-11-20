@@ -100,6 +100,8 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Actually RUNNING actuallyPutWhiteboardEvents");
 
+        console.log(this.clientForm);
+
         fetch("/whiteboardEvents/add/", {method: "POST" ,body: this.clientForm}) //converting array to string so it can be passed in the body
             .then(response => {
                 return response.json();})

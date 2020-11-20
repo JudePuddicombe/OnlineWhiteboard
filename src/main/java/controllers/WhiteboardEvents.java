@@ -1,10 +1,11 @@
 package controllers;
 
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import play.mvc.*;
-import play.mvc.Http.*;
 import server.Main;
 
 import javax.ws.rs.*;
@@ -24,19 +25,9 @@ public class WhiteboardEvents {
 
     @POST
     @Path("add/")
-    public static String eventAdd(String body) throws Exception{
+    public static String eventAdd(@FormDataParam("body")){
 
-        MediaType mediaType = new MediaType("MULTIPART_FORM_DATA","*");
-
-        Object clientForm = mediaType.parseMediaType(body);
-
-        System.out.println("Invoked whiteboardEvents/add");
-
-        BodyParser parser = new JSONParser();
-
-        parser.parse(clientForm);
-
-        // JSONArray clientEvents = (JSONArray) parser.parse(body);
+        System.out.println(FormDataMultiPart);
 
         return "{myString: \"string\"}";
     }
