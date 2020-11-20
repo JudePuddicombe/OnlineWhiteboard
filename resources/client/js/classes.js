@@ -7,7 +7,8 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
     }
 
     handleWhiteboardEvents(whiteboardEvents) {
-        whiteboardEvents.forEach(this.handleWhiteboardEvent(whiteboardEvent))
+        console.log("new Events " + whiteboardEvents);
+        whiteboardEvents.forEach(function (whiteboardEvent){this.handleWhiteboardEvent(whiteboardEvent)});
     }
 
     draw(lineSegment) {
@@ -38,6 +39,7 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
                 this.clear();
                 break;
             default:
+                this.draw(whiteboardEvent);
                 break;
         }
     }
@@ -53,6 +55,8 @@ class Server{ //contains all methods and attributes used when dealing with the s
     timeToken = 0;
 
     shouldSendClientChanges = true;
+
+    clientEvents = [];
 
     constructor() {
         this.clientForm = new FormData();
@@ -70,6 +74,8 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.getWhiteboardEvents()"); //console.log for debugging
 
+        let events = [];
+
         fetch("/whiteboardEvents/get/" + this.timeToken, {
             method: "GET", //method being used with the database
         }).then(response => { //api returns a promise
@@ -79,7 +85,13 @@ class Server{ //contains all methods and attributes used when dealing with the s
                 alert(JSON.stringify(serverResponse));    // if it does, convert JSON object to string and alert
             } else {
                 this.timeToken = serverResponse.timeToken; //updates timetoken
-                return serverResponse.whiteboardEvents; //returns serverChanges
+
+                serverResponse.events.forEach(function (event) {events.push(JSON.parse(event))});
+
+                console.log("New server events: ");
+                console.log(events);
+
+                return events; //returns serverChanges
             }
         });
     }
@@ -88,7 +100,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
 
-        this.clientForm.append("events",clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
+        this.clientEvents.push(clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
         this.actuallyPutWhiteboardEvents()
     }
 
@@ -96,9 +108,11 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         console.log("Invoked Server.actuallyPutWhiteboardEvents"); //console.log for debugging
 
-        if(!this.shouldSendClientChanges || !this.clientForm.get("events")){return}
+        if(!this.shouldSendClientChanges || this.clientEvents.length == 0){return}
 
         console.log("Actually RUNNING actuallyPutWhiteboardEvents");
+
+        this.clientForm.set("clientEvents",JSON.stringify(this.clientEvents));
 
         console.log(this.clientForm);
 
@@ -111,7 +125,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
                 }
             });
 
-        this.clientForm.delete("events");
+        this.clientEvents = [];
 
         this.shouldSendClientChanges = false;
 
