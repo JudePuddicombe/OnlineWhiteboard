@@ -59,6 +59,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
     clientEvents = [];
 
     constructor() {
+        this.clientForm = new FormData()
     }
 
     /*
@@ -147,7 +148,7 @@ class Pen{ //generates drawing events for the whiteboard
 
     color = "blue";
 
-    width = 1;
+    width = 5;
 
     setColor(color){
         console.log("Setting color too: " + color);
