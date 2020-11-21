@@ -12,7 +12,7 @@ function Start(){
     document.addEventListener('mousedown', function () {pen.down()}); //these functions are wrapped to retain "this"
     document.addEventListener('mouseup', function () {pen.up()});
 
-    //window.setInterval(GetServerLines, 5000);
+    window.setInterval(function(){server.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}, 250);
 
     //whiteboard buttons
 
@@ -20,7 +20,7 @@ function Start(){
     document.getElementById("greenColorButton").onclick = function() {pen.setColor("green")};
     document.getElementById("blueColorButton").onclick = function() {pen.setColor("blue")};
     document.getElementById("clearWhiteboardButton").onclick = function(){whiteboard.handleClientWhiteboardEvent({type: "clear"})}; //generates clearing events for the whiteboard
-    document.getElementById("updateButton").onclick = function(){new Promise((resolve) => {resolve(server.getWhiteboardEvents())}).then(events => {console.log("moo")})} //gets then draw new events from the server
+    document.getElementById("updateButton").onclick = function(){server.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})} //gets then draw new events from the server
     //whiteboard.handleWhiteboardEvents(events)
 
 }

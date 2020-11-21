@@ -8,7 +8,8 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
 
     handleWhiteboardEvents(whiteboardEvents) {
         console.log("new Events " + whiteboardEvents);
-        whiteboardEvents.forEach(function (whiteboardEvent){this.handleWhiteboardEvent(whiteboardEvent)});
+        let thisWhiteboard = this;
+        whiteboardEvents.forEach(function (whiteboardEvent){thisWhiteboard.handleWhiteboardEvent(whiteboardEvent)},thisWhiteboard);
     }
 
     draw(lineSegment) {
@@ -39,7 +40,6 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
                 this.clear();
                 break;
             default:
-                this.draw(whiteboardEvent);
                 break;
         }
     }
@@ -59,7 +59,6 @@ class Server{ //contains all methods and attributes used when dealing with the s
     clientEvents = [];
 
     constructor() {
-        this.clientForm = new FormData();
     }
 
     /*
@@ -76,7 +75,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
 
         let events = [];
 
-        fetch("/whiteboardEvents/get/" + this.timeToken, {
+        let promise = new Promise((resolve) => fetch("/whiteboardEvents/get/" + this.timeToken, {
             method: "GET", //method being used with the database
         }).then(response => { //api returns a promise
             return response.json(); //converting the response to JSON returns a promise
@@ -91,9 +90,11 @@ class Server{ //contains all methods and attributes used when dealing with the s
                 console.log("New server events: ");
                 console.log(events);
 
-                return events; //returns serverChanges
+                resolve(events); //returns serverChanges
             }
-        });
+        }));
+
+        return promise
     }
 
     putWhiteboardEvent(clientWhiteboardEvent){
@@ -130,7 +131,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
         this.shouldSendClientChanges = false;
 
         let server = this; //so that the call back function knows what server to talk to when it's in the middle of nowhere
-        setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},500,server) //unlocks the function after 500 milliseconds and checks to see if it should run again
+        setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},100,server) //unlocks the function after 500 milliseconds and checks to see if it should run again
     }
 }
 
