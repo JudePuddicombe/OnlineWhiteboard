@@ -59,13 +59,13 @@ class Server{ //contains all methods and attributes used when dealing with the s
     clientEvents = [];
 
     constructor() {
+        this.clientForm = new FormData;
     }
 
     /*
 
     constructor(classroomId) {
         this.classroomId = classroomId
-    }
 
      */
 
