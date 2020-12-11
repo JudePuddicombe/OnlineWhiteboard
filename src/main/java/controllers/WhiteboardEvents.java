@@ -22,7 +22,7 @@ public class WhiteboardEvents {
 
     public static void drawEvent(Object drawEvent, double timeToken) throws Exception{
 
-        PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Events,TimeToken) VALUES (?,?)");
+        PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Event,TimeToken) VALUES (?,?)");
         ps.setString(1, drawEvent.toString());
         ps.setDouble(2, timeToken);
         ps.execute();
@@ -34,7 +34,7 @@ public class WhiteboardEvents {
         PreparedStatement ps = Main.db.prepareStatement("DELETE FROM WhiteboardEvents");
         ps.execute();
 
-        PreparedStatement ps2 = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Events,TimeToken) VALUES (?,?)");
+        PreparedStatement ps2 = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Event,TimeToken) VALUES (?,?)");
         ps2.setString(1, clearEvent.toString());
         ps2.setDouble(2, timeToken);
         ps2.execute();
@@ -89,7 +89,7 @@ public class WhiteboardEvents {
         JSONObject serverResponse = new JSONObject();
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT Events FROM WhiteboardEvents WHERE TimeToken >= ?");
+            PreparedStatement ps = Main.db.prepareStatement("SELECT Event FROM WhiteboardEvents WHERE TimeToken >= ?");
             ps.setDouble(1, timeToken);
             ps.execute();
 

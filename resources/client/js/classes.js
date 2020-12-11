@@ -50,13 +50,15 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
     }
 }
 
-class Server{ //contains all methods and attributes used when dealing with the server
+class WhiteboardServer{ //contains all methods and attributes used when dealing with the server
 
     timeToken = 0;
 
     shouldSendClientChanges = true;
 
     clientEvents = [];
+
+    clientForm;
 
     constructor() {
         this.clientForm = new FormData()
@@ -106,7 +108,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
         this.actuallyPutWhiteboardEvents()
     }
 
-    actuallyPutWhiteboardEvents(){ //create a versatile api that sends whiteboard events (Line and Clear)
+    actuallyPutWhiteboardEvents(clientWhiteboardEvent){ //create a versatile api that sends whiteboard events (Line and Clear)
 
         console.log("Invoked Server.actuallyPutWhiteboardEvents"); //console.log for debugging
 
@@ -123,7 +125,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
                 return response.json();})
             .then(response => {
                 if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
-                    alert(JSON.stringify(response));    // if it does, convert JSON object to string and alert
+                    console.log(JSON.stringify(response));    // if it does, convert JSON object to string and alert
                 }
             });
 
@@ -132,7 +134,7 @@ class Server{ //contains all methods and attributes used when dealing with the s
         this.shouldSendClientChanges = false;
 
         let server = this; //so that the call back function knows what server to talk to when it's in the middle of nowhere
-        setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},100,server) //unlocks the function after 500 milliseconds and checks to see if it should run again
+        setTimeout(function(){server.shouldSendClientChanges = true; server.actuallyPutWhiteboardEvents()},500,server) //unlocks the function after 500 milliseconds and checks to see if it should run again
     }
 }
 
@@ -195,4 +197,23 @@ class Pen{ //generates drawing events for the whiteboard
             y: event.clientY - rect.top
         };
     }
+}
+
+class Chatboard{
+
+    constructor(div,server) {
+        this.server = server;
+        this.div = div;
+    }
+
+    addChat(){
+        console.log("moo");
+        this.div.innerHTML = this.div.innerHTML + "<br/> newLine";
+    }
+
+}
+
+
+class ChatroomServer{
+
 }

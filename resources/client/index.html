@@ -4,12 +4,28 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body onload = "Start()">
-<button id = "updateButton" type = "button">Update</button>
-<button id = "redColorButton" type = "button">Red</button>
-<button id = "greenColorButton" type = "button">Green</button>
-<button id = "blueColorButton" type = "button">Blue</button>
-<button id = "clearWhiteboardButton" type = "button">Clear</button>
-<canvas id="whiteboardCanvas" width="800" height="800"  style="border:1px solid #000000;"></canvas>
+
+<div id = "whiteboardButtons">
+    <button class = "whiteboardButton" id = "updateButton" type = "button">Update</button>
+    <button class = "whiteboardButton" id = "redColorButton" type = "button">Red</button>
+    <button class = "whiteboardButton" id = "greenColorButton" type = "button">Green</button>
+    <button class = "whiteboardButton" id = "blueColorButton" type = "button">Blue</button>
+    <button class = "whiteboardButton" id = "clearWhiteboardButton" type = "button">Clear</button>
+</div>
+
+<div id = "whiteboardAndChatboard">
+    <div id = "whiteboardDiv">
+        <canvas id="whiteboardCanvas"></canvas>
+    </div>
+
+
+
+    <div id = "chatboardDiv">
+        <div id = chatboard">hello!</div>
+    </div>
+</div>
+
+<button id = "newChatButton" type = "button">newLine</button>
 
 <script src="js/classes.js"></script>
 <script src="js/script.js"></script>
