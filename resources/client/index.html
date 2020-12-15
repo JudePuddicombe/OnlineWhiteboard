@@ -5,27 +5,39 @@
 </head>
 <body onload = "Start()">
 
-<div id = "whiteboardButtons">
-    <button class = "whiteboardButton" id = "updateButton" type = "button">Update</button>
-    <button class = "whiteboardButton" id = "redColorButton" type = "button">Red</button>
-    <button class = "whiteboardButton" id = "greenColorButton" type = "button">Green</button>
-    <button class = "whiteboardButton" id = "blueColorButton" type = "button">Blue</button>
-    <button class = "whiteboardButton" id = "clearWhiteboardButton" type = "button">Clear</button>
-</div>
+
 
 <div id = "whiteboardAndChatboard">
     <div id = "whiteboardDiv">
         <canvas id="whiteboardCanvas"></canvas>
+
+        <div id = "whiteboardButtons">
+            <button class = "whiteboardButtons" id = "updateButton" type = "button">Update</button>
+            <button class = "whiteboardButtons" id = "redColorButton" type = "button">Red</button>
+            <button class = "whiteboardButtons" id = "greenColorButton" type = "button">Green</button>
+            <button class = "whiteboardButtons" id = "blueColorButton" type = "button">Blue</button>
+            <button class = "whiteboardButtons" id = "clearWhiteboardButton" type = "button">Clear</button>
+        </div>
+
     </div>
 
 
 
     <div id = "chatboardDiv">
-        <div id = chatboard">hello!</div>
+        <div id = "chatboard">
+            <div id = "chatboardText">
+                bottom
+            </div>
+        </div>
+
+        <input type = "text" id = "chatbox" name = "chatbox">
+
+        <button id = "newChatButton" type = "button">Enter</button>
+
     </div>
 </div>
 
-<button id = "newChatButton" type = "button">newLine</button>
+
 
 <script src="js/classes.js"></script>
 <script src="js/script.js"></script>
