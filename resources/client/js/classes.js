@@ -1,9 +1,16 @@
+//whiteboard stuff
+
 class Whiteboard{ //manages events for the whiteboard (draw or clear) of the canvas
 
     constructor(c, s) {
         this.canvas = c;
         this.context = c.getContext("2d");
         this.server = s;
+
+        this.rect = this.canvas.getBoundingClientRect();
+
+        this.canvas.width = this.rect.width;
+        this.canvas.height = this.rect.height;
     }
 
     handleWhiteboardEvents(whiteboardEvents) {
@@ -14,13 +21,20 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
 
     draw(lineSegment) {
 
+        let startX = lineSegment.relativeStartX*this.canvas.width;
+        let endX = lineSegment.relativeEndX*this.canvas.width;
+
+        let startY = lineSegment.relativeStartY*this.canvas.height;
+        let endY = lineSegment.relativeEndY*this.canvas.height;
+
         console.log("Whiteboard.drawLineSegment"); //console.log for debugging
+        console.log(lineSegment);
 
         //drawing the line (NOTE: The whole delete-tag system has been removed)
 
         this.context.beginPath();
-        this.context.moveTo(lineSegment.startX, lineSegment.startY);
-        this.context.lineTo(lineSegment.endX, lineSegment.endY);
+        this.context.moveTo(startX, startY);
+        this.context.lineTo(endX, endY);
         this.context.lineWidth = lineSegment.width;
         this.context.strokeStyle = lineSegment.color;
         this.context.stroke();
@@ -44,10 +58,6 @@ class Whiteboard{ //manages events for the whiteboard (draw or clear) of the can
         }
     }
 
-    handleClientWhiteboardEvent(whiteboardEvent){
-        this.handleWhiteboardEvent(whiteboardEvent);
-        this.server.putWhiteboardEvent(whiteboardEvent);
-    }
 }
 
 class WhiteboardServer{ //contains all methods and attributes used when dealing with the server
@@ -58,19 +68,11 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
 
     clientEvents = [];
 
-    clientForm;
+    clientForm = new FormData();
 
-    constructor() {
-        this.clientForm = new FormData()
+    constructor(classroomID) {
+        this.classroomID = classroomID;
     }
-
-    /*
-
-    constructor(classroomId) {
-        this.classroomId = classroomId
-    }
-
-     */
 
     getWhiteboardEvents(){ //in the future the classroom Id will be used to distinguish the different whiteboards
 
@@ -78,7 +80,7 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
 
         let events = [];
 
-        let promise = new Promise((resolve) => fetch("/whiteboardEvents/get/" + this.timeToken, {
+        let promise = new Promise((resolve) => fetch("/whiteboardEvents/get/" + this.classroomID + "/" + this.timeToken, {
             method: "GET", //method being used with the database
         }).then(response => { //api returns a promise
             return response.json(); //converting the response to JSON returns a promise
@@ -120,7 +122,7 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
 
         console.log(this.clientForm);
 
-        fetch("/whiteboardEvents/add/", {method: "POST" ,body: this.clientForm}) //converting array to string so it can be passed in the body
+        fetch("/whiteboardEvents/add/" + this.classroomID, {method: "POST" ,body: this.clientForm}) //converting array to string so it can be passed in the body
             .then(response => {
                 return response.json();})
             .then(response => {
@@ -140,11 +142,12 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
 
 class Pen{ //generates drawing events for the whiteboard
 
-    constructor(whiteboard) {
+    constructor(whiteboard,server) {
         this.whiteboard = whiteboard;
+        this.server = server;
     }
 
-    position = {x:0,y:0};
+    position = {relativeX:0,relativeY:0};
 
     drawing = false;
 
@@ -167,52 +170,168 @@ class Pen{ //generates drawing events for the whiteboard
         this.drawing = false;
     }
 
-    moveTo(position){
+    moveTo(newPosition){
 
         console.log("trying to move");
 
         if(this.drawing){
 
-            console.log("trying to draw");
-
-            let lineSegment;
-            lineSegment = {startX: this.position.x, startY: this.position.y, endX: position.x, endY: position.y, color: this.color, width:this.width, type: "draw"}; //creating a lineSegment
-
-            this.position = position; //moving the pen
-            console.log("moved!");
-
-            this.whiteboard.handleClientWhiteboardEvent(lineSegment); //handeling the new "event"
-            console.log("and drawn!");
+            this.draw(newPosition);
 
         } else {
-            this.position = position; //moving the pen
+
+            this.position = newPosition; //moving the pen
             console.log("moved!");
+
         }
     }
 
     findPosition(event) {
-        let rect = this.whiteboard.canvas.getBoundingClientRect();
         return {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
+            relativeX: (event.clientX - this.whiteboard.rect.left)/this.whiteboard.canvas.width,
+            relativeY: (event.clientY - this.whiteboard.rect.top)/this.whiteboard.canvas.height
         };
     }
+
+    draw(newPosition){
+
+        console.log("trying to draw");
+
+        let lineSegment;
+        lineSegment = {relativeStartX: this.position.relativeX, relativeStartY: this.position.relativeY, relativeEndX: newPosition.relativeX, relativeEndY: newPosition.relativeY, color: this.color, width:this.width, type: "draw"}; //creating a lineSegment
+
+        console.log(lineSegment);
+
+        this.position = newPosition; //moving the pen
+        console.log("moved!");
+
+        this.whiteboard.handleWhiteboardEvent(lineSegment); //handeling the new "event"
+        this.server.putWhiteboardEvent(lineSegment); // sends to db
+
+        console.log("and drawn!");
+
+    }
+
+    clear(){
+
+        let clearEvent = {type: "clear"};
+        this.whiteboard.handleWhiteboardEvent(clearEvent);
+        this.server.putWhiteboardEvent(clearEvent);
+
+    }
 }
+
+//chatboard stuff
 
 class Chatboard{
 
-    constructor(div,server) {
+    constructor(chatboard,server,user) {
         this.server = server;
-        this.div = div;
+        this.chatboard = chatboard;
+        this.user = user;
     }
 
-    addChat(){
-        console.log("moo");
-        this.div.innerHTML = this.div.innerHTML + "<br/> newLine";
+    addChats(chats){
+        console.log("new Events " + chats);
+        let thisChatboard = this;
+        chats.forEach(function(chat){thisChatboard.addChat(chat)},thisChatboard)
+    }
+
+    addChat(chat){
+
+        let body = chat.body;
+        let username = chat.username;
+        let userId = chat.userId;
+        let output;
+
+        if(userId == this.user.id){
+
+            output = "<div class = 'chatboardTextYou'>(You)</br>" + body + "</div>"
+
+        } else {
+
+            output = "<div class = 'chatboardTextOther'>(" + username + ")</br>" + body + "</div>"
+
+        }
+
+        this.chatboard.innerHTML = this.chatboard.innerHTML + output;
+
     }
 
 }
 
-class ChatroomServer{
+class ChatboardServer{ //generates chats gathered from the server and sends chats to the server
+
+    timeToken = 0;
+
+    clientForm = new FormData()
+
+    constructor(classroomID) {
+        this.classroomID = classroomID;
+    }
+
+    putChat(chat){
+
+        this.clientForm.set("chat",JSON.stringify(chat));
+
+        console.log(this.clientForm);
+
+        fetch("/chatboardChats/add/" + this.classroomID, {method: "POST" ,body: this.clientForm})
+            .then(response => {
+                return response.json();})
+            .then(response => {
+                if (response.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+                    console.log(JSON.stringify(response));    // if it does, convert JSON object to string and alert
+                }
+            });
+    }
+
+    getChats(){
+
+        console.log("Invoked Server.getChats()"); //console.log for debugging
+
+        let chats = [];
+
+        let promise = new Promise((resolve) => fetch("/chatboardChats/get/" + this.classroomID + "/" + this.timeToken, {
+            method: "GET", //method being used with the database
+        }).then(response => { //api returns a promise
+            return response.json(); //converting the response to JSON returns a promise
+        }).then(serverResponse => {
+            if (serverResponse.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+                alert(JSON.stringify(serverResponse));    // if it does, convert JSON object to string and alert
+            } else {
+                this.timeToken = serverResponse.timeToken; //updates timetoken
+
+                serverResponse.chats.forEach(function (chat) {chats.push(JSON.parse(chat))});
+
+                console.log("New server chats: ");
+                console.log(chats);
+
+                resolve(chats); //returns serverChanges
+            }
+        }));
+
+        return promise
+    }
+}
+
+class Chatbox{
+
+    constructor(chatbox,server,user) {
+        this.chatbox = chatbox;
+        this.server = server;
+        this.user = user;
+    }
+
+    submitChat(){
+
+        if(this.chatbox.value == ""){return;}
+
+        let chatboxText = this.chatbox.value;
+        this.chatbox.value = "";
+
+        let chat = {userId: this.user.id, username: this.user.name, body: chatboxText}; //chats have a userId, username and body
+        this.server.putChat(chat);
+    }
 
 }

@@ -43,8 +43,8 @@ public class WhiteboardEvents {
     }
 
     @POST
-    @Path("add/")
-    public static String eventAdd(@FormDataParam("clientEvents") String clientEvents){
+    @Path("add/{classroomId}")
+    public static String eventAdd(@PathParam("classroomId") String classroomId, @FormDataParam("clientEvents") String clientEvents){
 
         JSONArray events =  (JSONArray)JSONValue.parse(clientEvents);
 
@@ -79,8 +79,8 @@ public class WhiteboardEvents {
     }
 
     @GET
-    @Path("get/{timetoken}")
-    public static String lineGet(@PathParam("timetoken") double timeToken){
+    @Path("get/{classroomId}/{timeToken}")
+    public static String eventGet(@PathParam("classroomId") String classroomId, @PathParam("timeToken") double timeToken){
 
         System.out.println("Invoked whiteboardEvents/get");
 

@@ -40,20 +40,30 @@
 
 #chatboard{
     position: relative;
-    text-align: left;
     height: 70%;
     width: 95%;
     border:1px solid #000000;
 }
 
-#chatboardText {
+
+#internalChatboard {
     position: absolute;
     bottom: 0px;
+    width: 100%;
 }
+
 
 #chatbox{
     margin-top: 5px;
     width: 94%;
     height: 19%;
     border:1px solid #000000;
+}
+
+.chatboardTextYou{
+    text-align: left;
+}
+
+.chatboardTextOther{
+    text-align: right;
 }
