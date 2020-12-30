@@ -155,6 +155,11 @@ class Pen{ //generates drawing events for the whiteboard
 
     width = 5;
 
+    setWidth(width){
+        console.log("Setting width too: " + width);
+        this.width = width;
+    }
+
     setColor(color){
         console.log("Setting color too: " + color);
         this.color = color;
