@@ -40,9 +40,11 @@ function Start(){
 
     //whiteboard buttons
 
+    document.getElementById("whiteboardWidth").oninput = function () {pen.setWidth(this.value)}
     document.getElementById("redColorButton").onclick = function() {pen.setColor("red")};
     document.getElementById("greenColorButton").onclick = function() {pen.setColor("green")};
     document.getElementById("blueColorButton").onclick = function() {pen.setColor("blue")};
+    document.getElementById("whiteColorButton").onclick = function() {pen.setColor("white")};
     document.getElementById("clearWhiteboardButton").onclick = function(){pen.clear()}; //generates clearing events for the whiteboard
     document.getElementById("updateWhiteboardButton").onclick = function(){whiteboardServer.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}//gets then draw new events from the server
 
