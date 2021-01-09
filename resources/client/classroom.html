@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Whiteboard</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body onload = "Start()">
+
+
+
+<div id = "whiteboardAndChatboard">
+    <div id = "whiteboardDiv">
+        <canvas id="whiteboardCanvas"></canvas>
+
+        <div id = "whiteboardButtons">
+            <button class = "whiteboardButtons" id = "updateWhiteboardButton" type = "button">Update</button>
+            <button class = "whiteboardButtons" id = "redColorButton" type = "button">Red</button>
+            <button class = "whiteboardButtons" id = "greenColorButton" type = "button">Green</button>
+            <button class = "whiteboardButtons" id = "blueColorButton" type = "button">Blue</button>
+            <button class = "whiteboardButtons" id = "clearWhiteboardButton" type = "button">Clear</button>
+        </div>
+
+    </div>
+
+
+
+    <div id = "chatboardDiv">
+
+        <div id = "chatboard">
+            <div id = "internalChatboard"></div>
+        </div>
+
+        <input type = "text" id = "chatbox" name = "chatbox">
+
+        <button id = "newChatButton" type = "button">Enter</button>
+        <button id = "updateChatButton" type = "button">Update</button>
+
+    </div>
+</div>
+
+
+
+<script src="js/classes.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+</html>

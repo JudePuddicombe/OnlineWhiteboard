@@ -1,8 +1,3 @@
-function preStart(){
-    document.addEventListener('load', Start());
-}
-
-
 function Start(){
 
     let user = {name: "Jude", id: "00000"};
@@ -40,8 +35,8 @@ function Start(){
 
     //automatic update
 
-    //window.setInterval(function(){whiteboardServer.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}, 250);
-    //window.setInterval(function(){chatboardServer.getChats().then(chats => {chatboard.addChats(chats)})}, 500);
+    window.setInterval(function(){whiteboardServer.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}, 250);
+    window.setInterval(function(){chatboardServer.getChats().then(chats => {chatboard.addChats(chats)})}, 500);
 
     //whiteboard buttons
 
