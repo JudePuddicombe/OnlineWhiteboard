@@ -6,20 +6,32 @@
     top: 50%;
     left: 50%;
 
-    margin: -400px 0 0 -600px;
+    margin: -35% 0 0 -35%;
 
-    height: 800px;
-    width: 1200px;
+    max-height: 500px;
+
+    height: 70%;
+    width: 70%;
+
+    /*
+
+    top: 50%;
+    left:50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 10px;
+
+    */
 }
 
 /*whiteboard*/
 
 #whiteboardDiv{
     display: inline-block;
-    max-width: 800px;
-    max-height: 800px;
+    min-width: 500px;
     height: 100%;
-    width: 100%;
+    width: 69%;
 }
 
 #whiteboardCanvas {
@@ -34,7 +46,8 @@
     display: inline-block;
     height: 100%;
     width: 30%;
-    overflow: hidden;
+    min-width: 150px;
+    /*overflow: hidden;*/
     float: right;
 }
 
@@ -66,4 +79,66 @@
 
 .chatboardTextOther{
     text-align: right;
+}
+
+#loginBox{
+    padding: 20px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    margin: -100px 0 0 -150px;
+
+    height: 200px;
+    width: 300px;
+}
+
+#onlineWhiteboardLogo{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+#findClassroomDiv{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#findClassroom{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+}
+
+#buttons{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+}
+
+#submitClassroomId{
+    margin-right: 18%;
+    width: 40%
+}
+#gotoLoginPage{
+    width: 40%
+}
+
+#temporaryUsernameDiv{
+    padding: 20px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    margin: -100px 0 0 -150px;
+
+    height: 200px;
+    width: 300px;
 }

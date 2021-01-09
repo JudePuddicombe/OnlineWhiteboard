@@ -1,49 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Online Whiteboard</title>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
-<body onload = "preStart()">
+<body>
 
 
+<img id = "onlineWhiteboardLogo" src = "Online_Whiteboard.png" alt = "Online Whiteboard Logo">
 
-<div id = "whiteboardAndChatboard">
-    <div id = "whiteboardDiv">
-        <canvas id="whiteboardCanvas"></canvas>
 
-        <div id = "whiteboardButtons">
-            <button class = "whiteboardButtons" id = "updateWhiteboardButton" type = "button">Update</button>
-            <button class = "whiteboardButtons" id = "redColorButton" type = "button">Red</button>
-            <button class = "whiteboardButtons" id = "greenColorButton" type = "button">Green</button>
-            <button class = "whiteboardButtons" id = "blueColorButton" type = "button">Blue</button>
-            <button class = "whiteboardButtons" id = "whiteColorButton" type = "button">White</button>
-            <button class = "whiteboardButtons" id = "clearWhiteboardButton" type = "button">Clear</button>
-        </div>
-
-        <input type="range" min="1" max="10" value="5" class="slider" id="whiteboardWidth">
-
+<div id = "findClassroomDiv">
+    <input id = "findClassroom" type = "text" name = "findClassroom" placeholder = "Enter Classroom Code: ">
+    <br>
+    <div id = "buttons">
+        <button id = "submitClassroomId" type = "button">Submit</button>
+        <button id = "gotoLoginPage" type = "button">Login</button>
     </div>
 
-
-
-    <div id = "chatboardDiv">
-
-        <div id = "chatboard">
-            <div id = "internalChatboard"></div>
-        </div>
-
-        <input type = "text" id = "chatbox" name = "chatbox">
-
-        <button id = "newChatButton" type = "button">Enter</button>
-        <button id = "updateChatButton" type = "button">Update</button>
-
-    </div>
 </div>
-
-
-
-<script src="js/classes.js"></script>
-<script src="js/script.js"></script>
 
 </body>
 </html>

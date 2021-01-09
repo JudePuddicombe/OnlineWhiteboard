@@ -269,7 +269,7 @@ class ChatboardServer{ //generates chats gathered from the server and sends chat
 
     timeToken = 0;
 
-    clientForm = new FormData()
+    clientForm = new FormData();
 
     constructor(classroomID) {
         this.classroomID = classroomID;
