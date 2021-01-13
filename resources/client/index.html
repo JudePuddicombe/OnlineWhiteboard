@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Whiteboard</title>
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/index.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body onload = "start()">
 
-
-<img id = "onlineWhiteboardLogo" src = "Online_Whiteboard.png" alt = "Online Whiteboard Logo">
-
+<img id = "onlineWhiteboardLogo" src = "img/Online_Whiteboard.png" alt = "Online Whiteboard Logo">
 
 <div id = "findClassroomDiv">
     <input id = "findClassroom" type = "text" name = "findClassroom" placeholder = "Enter Classroom Code: ">
     <br>
     <div id = "buttons">
-        <button id = "submitClassroomId" type = "button">Submit</button>
+        <button id = "submitClassroom" type = "button">Submit</button>
         <button id = "gotoLoginPage" type = "button">Login</button>
     </div>
-
 </div>
+
+<script src="js/index.js"></script>
 
 </body>
 </html>

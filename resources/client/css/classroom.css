@@ -6,9 +6,9 @@
     top: 50%;
     left: 50%;
 
-    margin: -35% 0 0 -35%;
+    margin: -20% 0 0 -35%;
 
-    max-height: 500px;
+    /*max-height: 500px;*/
 
     height: 70%;
     width: 70%;
@@ -79,66 +79,4 @@
 
 .chatboardTextOther{
     text-align: right;
-}
-
-#loginBox{
-    padding: 20px;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-
-    margin: -100px 0 0 -150px;
-
-    height: 200px;
-    width: 300px;
-}
-
-#onlineWhiteboardLogo{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 70%;
-}
-
-#findClassroomDiv{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-}
-
-#findClassroom{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 20%;
-}
-
-#buttons{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 20%;
-}
-
-#submitClassroomId{
-    margin-right: 18%;
-    width: 40%
-}
-#gotoLoginPage{
-    width: 40%
-}
-
-#temporaryUsernameDiv{
-    padding: 20px;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-
-    margin: -100px 0 0 -150px;
-
-    height: 200px;
-    width: 300px;
 }

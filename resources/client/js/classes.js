@@ -2,10 +2,9 @@
 
 class Whiteboard{ //manages events for the whiteboard (draw or clear) of the canvas
 
-    constructor(c, s) {
-        this.canvas = c;
-        this.context = c.getContext("2d");
-        this.server = s;
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
 
         this.rect = this.canvas.getBoundingClientRect();
 
@@ -230,8 +229,7 @@ class Pen{ //generates drawing events for the whiteboard
 
 class Chatboard{
 
-    constructor(chatboard,server,user) {
-        this.server = server;
+    constructor(chatboard,user) {
         this.chatboard = chatboard;
         this.user = user;
     }

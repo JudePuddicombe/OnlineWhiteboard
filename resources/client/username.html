@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Whiteboard</title>
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/username.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body onload="start()">
 <div id = "temporaryUsernameDiv">
-    <input id = "temporaryUsername" type = "text" name = "temporaryUsernameBox">
+    <input id = "temporaryUsername" type = "text" name = "temporaryUsernameBox", placeholder = "Enter Username: ">
+    <button id = "submitClassroom" type = "button">Submit</button>
 </div>
+
+<script src="js/username.js"></script>
+
 </body>
 </html>
