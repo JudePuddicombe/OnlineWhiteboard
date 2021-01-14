@@ -10,11 +10,13 @@ function submitClassroomId(){
 
     let serverReadableClassroomId = makeClassroomIdServerReadable(inputClassroomId);
 
-    if(classroomIdExists(serverReadableClassroomId)){
-        goToClassroom(serverReadableClassroomId);
-    } else {
-        sayClassroomDoesNotExist();
-    }
+    checkClassroomId(serverReadableClassroomId).then((classroomIdExists) => {
+        if(classroomIdExists){
+            goToClassroom(serverReadableClassroomId);
+        }else{
+            sayClassroomDoesNotExist();
+        }
+    })
 }
 
 function classroomIdNotValid(classroomId){
@@ -28,11 +30,11 @@ function classroomIdNotValid(classroomId){
     return false;
 }
 
-function classroomIdExists(classroomID){
+function checkClassroomId(classroomID){
 
     console.log("Invoked classroomIdQuery"); //console.log for debugging
 
-    fetch("/classrooms/get/" + classroomID, {
+    let promise = new Promise((resolve) => fetch("/classrooms/check/" + classroomID, {
         method: "GET", //method being used with the database
     }).then(response => { //api returns a promise
         return response.json(); //converting the response to JSON returns a promise
@@ -40,13 +42,18 @@ function classroomIdExists(classroomID){
         if (serverResponse.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
             alert(JSON.stringify(serverResponse));    // if it does, convert JSON object to string and alert
         } else {
-            if(serverResponse.foundClassroomId){
-                return true;
+
+            if(serverResponse.classroomIsFound){
+                console.log("Classroom found!");
+                resolve(true);
             } else {
-                return false;
+                console.log(serverResponse);
+                resolve(false);
             }
         }
-    });
+    }));
+
+    return promise;
 }
 
 function makeClassroomIdServerReadable(classroomId){
@@ -59,7 +66,8 @@ function goToClassroom(classroomId){
 }
 
 function sayClassroomDoesNotExist() {
-    alert("Classroom Id invalid")
+    console.log("Classroom Id invalid");
+    alert("Classroom Id invalid");
 }
 
 function start(){
