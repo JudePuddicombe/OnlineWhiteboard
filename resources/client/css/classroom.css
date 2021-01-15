@@ -80,3 +80,9 @@
 .chatboardTextOther{
     text-align: right;
 }
+
+#classroomId{
+    position: absolute;
+    margin-left: 10%;
+    font-size: x-large;
+}

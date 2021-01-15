@@ -23,9 +23,9 @@ function classroomIdNotValid(classroomId){
 
     console.log(classroomId);
 
-    if(classroomId.length != 6) {
-        return true;
-    }
+    //if(classroomId.length != 5) {
+    //    return true;
+    //}
 
     return false;
 }
@@ -65,12 +65,28 @@ function goToClassroom(classroomId){
     window.location.href = "http://localhost:8081/client/username.html";
 }
 
-function sayClassroomDoesNotExist() {
+function sayClassroomDoesNotExist(){
     console.log("Classroom Id invalid");
     alert("Classroom Id invalid");
 }
 
+function createClassroom(){
+
+    fetch("/classrooms/create/", {
+        method: "GET", //method being used with the database
+    }).then(response => { //api returns a promise
+        return response.json(); //converting the response to JSON returns a promise
+    }).then(serverResponse => {
+        if (serverResponse.hasOwnProperty("Error")) { //checks if response from server has a key "Error"
+            alert(JSON.stringify(serverResponse));    // if it does, convert JSON object to string and alert
+        } else {
+            localStorage.setItem("classroomId",serverResponse.classroomId)
+            window.location.href = "http://localhost:8081/client/username.html";
+        }
+    })
+}
+
 function start(){
     document.getElementById("submitClassroom").onclick = function(){submitClassroomId()};
-    document.getElementById("gotoLoginPage").onclick = function () {window.location.href = "http://localhost:8081/client/login.html";}
+    document.getElementById("createClassroom").onclick = function () {createClassroom()}
 }

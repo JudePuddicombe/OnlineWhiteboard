@@ -20,23 +20,26 @@ import java.util.List;
 
 public class WhiteboardEvents {
 
-    public static void drawEvent(Object drawEvent, double timeToken) throws Exception{
+    public static void drawEvent(String classroomId, Object drawEvent, double timeToken) throws Exception{
 
-        PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Event,TimeToken) VALUES (?,?)");
-        ps.setString(1, drawEvent.toString());
-        ps.setDouble(2, timeToken);
+        PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (ClassroomId,Event,TimeToken) VALUES (?,?,?)");
+        ps.setString(1, classroomId);
+        ps.setString(2, drawEvent.toString());
+        ps.setDouble(3, timeToken);
         ps.execute();
 
         System.out.println("Drawn");
     }
 
-    public static void clearEvent(Object clearEvent, double timeToken) throws Exception{
-        PreparedStatement ps = Main.db.prepareStatement("DELETE FROM WhiteboardEvents");
+    public static void clearEvent(String classroomId, Object clearEvent, double timeToken) throws Exception{
+        PreparedStatement ps = Main.db.prepareStatement("DELETE FROM WhiteboardEvents WHERE ClassroomId = ?");
+        ps.setString(1,classroomId);
         ps.execute();
 
-        PreparedStatement ps2 = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Event,TimeToken) VALUES (?,?)");
-        ps2.setString(1, clearEvent.toString());
-        ps2.setDouble(2, timeToken);
+        PreparedStatement ps2 = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (ClassroomId,Event,TimeToken) VALUES (?,?,?)");
+        ps2.setString(1, classroomId);
+        ps2.setString(2, clearEvent.toString());
+        ps2.setDouble(3, timeToken);
         ps2.execute();
 
         System.out.println("Cleared");
@@ -61,10 +64,10 @@ public class WhiteboardEvents {
             try {
                 switch (event.get("type").toString()) {
                     case "draw":
-                        drawEvent(event,timeToken);
+                        drawEvent(classroomId,event,timeToken);
                         break;
                     case "clear":
-                        clearEvent(event,timeToken);
+                        clearEvent(classroomId, event,timeToken);
                         break;
                     default:
                         break;
@@ -89,8 +92,9 @@ public class WhiteboardEvents {
         JSONObject serverResponse = new JSONObject();
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT Event FROM WhiteboardEvents WHERE TimeToken >= ?");
-            ps.setDouble(1, timeToken);
+            PreparedStatement ps = Main.db.prepareStatement("SELECT Event FROM WhiteboardEvents WHERE TimeToken >= ? AND ClassroomId = ?");
+            ps.setDouble(1, timeToken - 50);
+            ps.setString(2,classroomId);
             ps.execute();
 
             ResultSet results = ps.executeQuery();

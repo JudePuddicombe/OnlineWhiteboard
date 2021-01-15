@@ -36,9 +36,10 @@ public class ChatboardChats {
 
         try{
 
-            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO ChatboardChats (Chat,TimeToken) VALUES (?,?)");
-            ps.setString(1, chat.toString());
-            ps.setDouble(2, timeToken);
+            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO ChatboardChats (ClassroomId,Chat,TimeToken) VALUES (?,?,?)");
+            ps.setString(1, classroomId);
+            ps.setString(2, chat.toString());
+            ps.setDouble(3, timeToken);
             ps.execute();
 
             System.out.println("Written");
@@ -62,8 +63,9 @@ public class ChatboardChats {
         JSONObject serverResponse = new JSONObject();
 
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT Chat FROM ChatboardChats WHERE TimeToken >= ?");
+            PreparedStatement ps = Main.db.prepareStatement("SELECT Chat FROM ChatboardChats WHERE TimeToken >= ? AND ClassroomId = ?");
             ps.setDouble(1, timeToken);
+            ps.setString(2, classroomId);
             ps.execute();
 
             ResultSet results = ps.executeQuery();

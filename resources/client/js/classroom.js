@@ -1,18 +1,13 @@
 function start(){
 
-    let user;
-    let classroomId;
+    //Getting the username and stuff
 
-    try{
+    let user = {name: localStorage.getItem("username"), id: localStorage.getItem("userId")}
+    let classroomId = localStorage.getItem("classroomId");
 
-        user = {name: localStorage.getItem("username"), id: localStorage.getItem("userId")}
-        classroomId = localStorage.getItem("classroomId");
+    //Setting the classroom name
 
-    } catch(err) {
-
-        user = {name: "Jude", id: "00000"}; //for development perposes while the other sites are not working these will be the default values
-        classroomId = "00000";
-    }
+    document.getElementById("classroomId").innerHTML += classroomId;
 
     //whiteboard object instantiation
 
@@ -45,8 +40,8 @@ function start(){
 
     //automatic update
 
-    //window.setInterval(function(){whiteboardServer.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}, 250);
-    //window.setInterval(function(){chatboardServer.getChats().then(chats => {chatboard.addChats(chats)})}, 500);
+    window.setInterval(function(){whiteboardServer.getWhiteboardEvents().then(events => {whiteboard.handleWhiteboardEvents(events)})}, 250);
+    window.setInterval(function(){chatboardServer.getChats().then(chats => {chatboard.addChats(chats)})}, 500);
 
     //whiteboard buttons
 
