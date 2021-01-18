@@ -94,10 +94,15 @@ public class Classrooms {
 
             } while (resultsOne.getInt(1) != 0 || resultsTwo.getInt(1) != 0);
 
+            System.out.println("Adding statement");
+
             PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (Event,TimeToken,ClassroomId) VALUES (?,?,?)");
             ps.setString(1,"{\"type\": \"clear\"}");
             ps.setDouble(2,0);
             ps.setString(3,classroomId);
+            ps.execute();
+
+            System.out.println("Added statement: " + classroomId);
 
             return "{\"classroomId\":\"" + classroomId + "\"}";
 

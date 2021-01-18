@@ -1,36 +1,60 @@
-function submitClassroomId(){
+function SubmitClassroomId(){
 
     let inputClassroomId = document.getElementById("findClassroom").value;
 
-    if(classroomIdNotValid(inputClassroomId)){
+    if(ClassroomIdNotValid(inputClassroomId)){ //Chose to call function ClassroomIdNotValid so that the code reads better
         console.log("Classroom Id Invalid: " + inputClassroomId);
-        sayClassroomDoesNotExist();
+        SayClassroomDoesNotExist();
         return;
     }
 
-    let serverReadableClassroomId = makeClassroomIdServerReadable(inputClassroomId);
-
-    checkClassroomId(serverReadableClassroomId).then((classroomIdExists) => {
+    CheckClassroomId(inputClassroomId).then((classroomIdExists) => {
         if(classroomIdExists){
-            goToClassroom(serverReadableClassroomId);
+            GoToClassroom(inputClassroomId);
         }else{
-            sayClassroomDoesNotExist();
+            SayClassroomDoesNotExist();
         }
     })
 }
 
-function classroomIdNotValid(classroomId){
+function ClassroomIdNotValid(classroomId){
 
     console.log(classroomId);
 
-    //if(classroomId.length != 5) {
-    //    return true;
-    //}
+    let validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    return false;
+    if(classroomId.length != 9) {//Checking string is correct length
+        return true;
+    }
+
+    console.log("1");
+
+    if(classroomId.charAt(4) != "-"){//Checking for the separator
+        return true;
+    }
+
+    console.log("2");
+
+    for(let i = 0; i < 4; i++){//Checking first half of string contains only capital letters
+        if(!validChars.includes(classroomId.charAt(i))){
+            return true;
+        }
+    }
+
+    console.log("3");
+
+    for(let i = 5; i < 9; i++){ //Checking second half of string is only capital letters
+        if(!validChars.includes(classroomId.charAt(i))){
+            return true;
+        }
+    }
+
+    console.log("4");
+
+    return false; //If none of these return true then the string must be valid
 }
 
-function checkClassroomId(classroomID){
+function CheckClassroomId(classroomID){
 
     console.log("Invoked classroomIdQuery"); //console.log for debugging
 
@@ -56,21 +80,17 @@ function checkClassroomId(classroomID){
     return promise;
 }
 
-function makeClassroomIdServerReadable(classroomId){
-    return classroomId;
-}
-
-function goToClassroom(classroomId){
+function GoToClassroom(classroomId){
     localStorage.setItem("classroomId",classroomId);
     window.location.href = "http://localhost:8081/client/username.html";
 }
 
-function sayClassroomDoesNotExist(){
+function SayClassroomDoesNotExist(){
     console.log("Classroom Id invalid");
     alert("Classroom Id invalid");
 }
 
-function createClassroom(){
+function CreateClassroom(){
 
     fetch("/classrooms/create/", {
         method: "GET", //method being used with the database
@@ -86,7 +106,7 @@ function createClassroom(){
     })
 }
 
-function start(){
-    document.getElementById("submitClassroom").onclick = function(){submitClassroomId()};
-    document.getElementById("createClassroom").onclick = function () {createClassroom()}
+function Start(){
+    document.getElementById("submitClassroom").onclick = function(){SubmitClassroomId()};
+    document.getElementById("createClassroom").onclick = function () {CreateClassroom()}
 }

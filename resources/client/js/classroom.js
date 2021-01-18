@@ -1,4 +1,4 @@
-function start(){
+function Start(){
 
     //Getting the username and stuff
 
