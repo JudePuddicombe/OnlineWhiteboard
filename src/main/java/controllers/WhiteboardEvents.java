@@ -20,15 +20,15 @@ import java.util.List;
 
 public class WhiteboardEvents {
 
-    public static void drawEvent(String classroomId, Object drawEvent, double timeToken) throws Exception{
+    public static void genericEvent(String classroomId, Object genericEvent, double timeToken) throws Exception{
 
         PreparedStatement ps = Main.db.prepareStatement("INSERT INTO WhiteboardEvents (ClassroomId,Event,TimeToken) VALUES (?,?,?)");
         ps.setString(1, classroomId);
-        ps.setString(2, drawEvent.toString());
+        ps.setString(2, genericEvent.toString());
         ps.setDouble(3, timeToken);
         ps.execute();
 
-        System.out.println("Drawn");
+        System.out.println("Entered");
     }
 
     public static void clearEvent(String classroomId, Object clearEvent, double timeToken) throws Exception{
@@ -63,13 +63,11 @@ public class WhiteboardEvents {
 
             try {
                 switch (event.get("type").toString()) {
-                    case "draw":
-                        drawEvent(classroomId,event,timeToken);
-                        break;
                     case "clear":
                         clearEvent(classroomId, event,timeToken);
                         break;
                     default:
+                        genericEvent(classroomId,event,timeToken);
                         break;
                 }
             } catch (Exception exception){

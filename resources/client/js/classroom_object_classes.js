@@ -73,7 +73,7 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
         this.classroomID = classroomID;
     }
 
-    getWhiteboardEvents(){ //in the future the classroom Id will be used to distinguish the different whiteboards
+    getWhiteboardEvents(){ //the classroom Id is used to distinguish the different whiteboards
 
         console.log("Invoked Server.getWhiteboardEvents()"); //console.log for debugging
 
@@ -105,7 +105,7 @@ class WhiteboardServer{ //contains all methods and attributes used when dealing 
 
         console.log("Invoked Server.putWhiteboardEvents"); //console.log for debugging
 
-        this.clientEvents.push(clientWhiteboardEvent); //add the JSON strings of the events to the list of evenst to go to the db
+        this.clientEvents.push(clientWhiteboardEvent); //add the JSON strings of the events to the list of events to go to the db
         this.actuallyPutWhiteboardEvents()
     }
 
